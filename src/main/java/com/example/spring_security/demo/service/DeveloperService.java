@@ -6,5 +6,10 @@ import java.util.List;
 
 public interface DeveloperService {
     List<Developer> getAll();
+
     Developer getById(Long id);
+
+    Developer create(Developer developer);
+
+    void deleteById(Long id);
 }

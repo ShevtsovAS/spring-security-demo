@@ -7,5 +7,10 @@ import java.util.Optional;
 
 public interface DeveloperRepository {
     List<Developer> getAll();
+
     Optional<Developer> getById(Long id);
+
+    Developer save(Developer developer);
+
+    boolean deleteById(Long id);
 }

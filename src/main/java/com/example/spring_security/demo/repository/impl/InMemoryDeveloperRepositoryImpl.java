@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toMap;
 
 @Repository
-public class DeveloperInMemoryRepositoryImpl implements DeveloperRepository {
+public class InMemoryDeveloperRepositoryImpl implements DeveloperRepository {
 
     private static final Map<Long, Developer> DEVELOPERS = Stream.of(
             Developer.of(1L, "Ivan", "Ivanov"),
@@ -30,5 +30,15 @@ public class DeveloperInMemoryRepositoryImpl implements DeveloperRepository {
     @Override
     public Optional<Developer> getById(Long id) {
         return Optional.ofNullable(DEVELOPERS.get(id));
+    }
+
+    @Override
+    public Developer save(Developer developer) {
+        return DEVELOPERS.put(developer.getId(), developer);
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        return DEVELOPERS.remove(id) != null;
     }
 }

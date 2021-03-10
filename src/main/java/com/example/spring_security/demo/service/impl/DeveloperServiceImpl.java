@@ -25,4 +25,16 @@ public class DeveloperServiceImpl implements DeveloperService {
         return developerRepository.getById(id)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with id: %s not found", id)));
     }
+
+    @Override
+    public Developer create(Developer developer) {
+        return developerRepository.save(developer);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        if (!developerRepository.deleteById(id)) {
+            throw new UserNotFoundException(String.format("User with id: %s not found", id));
+        }
+    }
 }
