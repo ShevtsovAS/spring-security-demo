@@ -1,5 +1,6 @@
 package com.example.spring_security.demo.rest;
 
+import com.example.spring_security.demo.exeptions.UserNotFoundException;
 import com.example.spring_security.demo.model.Developer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,8 @@ public class DeveloperRestController {
 
     @GetMapping("/{id}")
     public Developer getById(@PathVariable Long id) {
-        return Optional.ofNullable(DEVELOPERS.get(id)).orElseThrow();
+        return Optional.ofNullable(DEVELOPERS.get(id))
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id: %s not found", id)));
     }
 
 }
