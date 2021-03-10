@@ -21,7 +21,6 @@ public class InMemoryDeveloperRepositoryImpl implements DeveloperRepository {
             Developer.of(3L, "Petr", "Petrov")
     ).collect(toMap(Developer::getId, it -> it));
 
-
     @Override
     public List<Developer> getAll() {
         return new ArrayList<>(DEVELOPERS.values());
@@ -34,7 +33,8 @@ public class InMemoryDeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public Developer save(Developer developer) {
-        return DEVELOPERS.put(developer.getId(), developer);
+        DEVELOPERS.put(developer.getId(), developer);
+        return developer;
     }
 
     @Override

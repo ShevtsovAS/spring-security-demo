@@ -2,6 +2,7 @@ package com.example.spring_security.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,17 +12,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import static com.example.spring_security.demo.model.Permission.DEVELOPERS_READ;
-import static com.example.spring_security.demo.model.Permission.DEVELOPERS_WRITE;
 import static com.example.spring_security.demo.model.Role.ADMIN;
 import static com.example.spring_security.demo.model.Role.USER;
-import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private static final String REST_API_END_POINT = "/api/**";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -29,9 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(GET, REST_API_END_POINT).hasAuthority(DEVELOPERS_READ.getValue())
-                .antMatchers(POST, REST_API_END_POINT).hasAuthority(DEVELOPERS_WRITE.getValue())
-                .antMatchers(DELETE, REST_API_END_POINT).hasAuthority(DEVELOPERS_WRITE.getValue())
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
