@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import static com.example.spring_security.demo.model.Permission.DEVELOPERS_READ;
+import static com.example.spring_security.demo.model.Permission.DEVELOPERS_WRITE;
 import static com.example.spring_security.demo.model.Role.ADMIN;
 import static com.example.spring_security.demo.model.Role.USER;
 import static org.springframework.http.HttpMethod.*;
@@ -27,9 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(GET, REST_API_END_POINT).hasAnyRole(ADMIN.name(), USER.name())
-                .antMatchers(POST, REST_API_END_POINT).hasRole(ADMIN.name())
-                .antMatchers(DELETE, REST_API_END_POINT).hasRole(ADMIN.name())
+                .antMatchers(GET, REST_API_END_POINT).hasAuthority(DEVELOPERS_READ.getValue())
+                .antMatchers(POST, REST_API_END_POINT).hasAuthority(DEVELOPERS_WRITE.getValue())
+                .antMatchers(DELETE, REST_API_END_POINT).hasAuthority(DEVELOPERS_WRITE.getValue())
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
@@ -46,12 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 User.builder()
                         .username("admin")
                         .password("$2y$12$jC9Jr4Jsa4m1WhnKqJOuxevrhLWJTts.yS8EO0zfDZykwB9uk/9MW")
-                        .roles(ADMIN.name())
+                        .authorities(ADMIN.getAuthorities())
                         .build(),
                 User.builder()
                         .username("user")
                         .password("$2y$12$xo6H1DazijkctHqFPYqNQODirwKQ/B1aRVO2j3olxK/LKQnqCkpuC")
-                        .roles(USER.name())
+                        .authorities(USER.getAuthorities())
                         .build()
         );
     }
