@@ -8,3 +8,9 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+
+jwt:
+  header: Authorization
+  prefix: 'Bearer '
+  secret: my-secret-key
+  expiration: 24h
