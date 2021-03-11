@@ -1,3 +1,10 @@
 server.error:
 #  include-stacktrace: always
   include-message: always
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring_security_demo
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
