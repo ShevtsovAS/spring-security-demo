@@ -1,6 +1,7 @@
 package com.example.spring_security.demo.config;
 
-import com.example.spring_security.demo.security.JwtConfigurer;
+import com.example.spring_security.demo.security.JwtTokenFilter;
+import com.example.spring_security.demo.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtConfigurer jwtConfigurer;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -33,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/api/v1/auth/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .apply(jwtConfigurer);
+                .addFilter(new JwtTokenFilter(authenticationManagerBean(), jwtTokenProvider));
     }
 
     @Bean

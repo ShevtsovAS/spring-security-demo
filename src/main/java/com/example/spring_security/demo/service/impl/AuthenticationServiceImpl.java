@@ -47,8 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @SneakyThrows
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        val logoutHandler = new SecurityContextLogoutHandler();
-        logoutHandler.logout(request, response, null);
+        new SecurityContextLogoutHandler().logout(request, response, null);
         new SimpleUrlLogoutSuccessHandler().onLogoutSuccess(request, response, null);
     }
 }

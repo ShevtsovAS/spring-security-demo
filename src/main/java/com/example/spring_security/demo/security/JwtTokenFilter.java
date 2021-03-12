@@ -1,34 +1,36 @@
 package com.example.spring_security.demo.security;
 
 import com.example.spring_security.demo.exeptions.JwtAuthenticationException;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-@Component
-@RequiredArgsConstructor
-public class JwtTokenFilter extends GenericFilterBean {
+public class JwtTokenFilter extends BasicAuthenticationFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    public JwtTokenFilter(AuthenticationManager authenticationManager,
+                          JwtTokenProvider jwtTokenProvider) {
+        super(authenticationManager);
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Override
     @SneakyThrows
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
-        Optional.ofNullable(jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest))
-                .filter(token -> validateToken(token, servletResponse))
-                .map(token -> jwtTokenProvider.getAuthentication(token, (HttpServletRequest) servletRequest))
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
+        Optional.ofNullable(jwtTokenProvider.resolveToken(request))
+                .filter(token -> validateToken(token, response))
+                .map(token -> jwtTokenProvider.getAuthentication(token, request))
                 .ifPresent(this::setAuthentication);
-        filterChain.doFilter(servletRequest, servletResponse);
+        chain.doFilter(request, response);
     }
 
     @SneakyThrows
