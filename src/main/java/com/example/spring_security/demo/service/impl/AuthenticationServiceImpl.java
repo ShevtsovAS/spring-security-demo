@@ -6,12 +6,14 @@ import com.example.spring_security.demo.rest.AuthenticationResponse;
 import com.example.spring_security.demo.security.JwtTokenProvider;
 import com.example.spring_security.demo.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +45,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @SneakyThrows
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         val logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(request, response, null);
+        new SimpleUrlLogoutSuccessHandler().onLogoutSuccess(request, response, null);
     }
 }

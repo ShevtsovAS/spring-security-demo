@@ -26,7 +26,7 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
         Optional.ofNullable(jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest))
                 .filter(token -> validateToken(token, servletResponse))
-                .map(jwtTokenProvider::getAuthentication)
+                .map(token -> jwtTokenProvider.getAuthentication(token, (HttpServletRequest) servletRequest))
                 .ifPresent(this::setAuthentication);
         filterChain.doFilter(servletRequest, servletResponse);
     }

@@ -11,7 +11,9 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Component
@@ -28,15 +32,16 @@ public class JwtTokenProvider {
     private final JwtConfig jwtConfig;
     private final UserDetailsService userDetailsService;
 
-    public String createToken(String username, String role) {
+    public String createToken(Authentication authentication) {
         val now = LocalDateTime.now();
         val validity = now.plus(jwtConfig.getExpiration());
+        val authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList());
         return Jwts.builder()
-                .setSubject(username)
-                .claim("role", role)
+                .setSubject(authentication.getName())
+                .claim("authorities", authorities)
                 .setIssuedAt(Timestamp.valueOf(now))
                 .setExpiration(Timestamp.valueOf(validity))
-                .signWith(SignatureAlgorithm.ES256, jwtConfig.getSecret())
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecret())
                 .compact();
     }
 
@@ -50,9 +55,11 @@ public class JwtTokenProvider {
         }
     }
 
-    public Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String token, HttpServletRequest request) {
         val userDetails = userDetailsService.loadUserByUsername(getUserName(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return authentication;
     }
 
     public String resolveToken(HttpServletRequest request) {
@@ -70,15 +77,4 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public String createToken(Authentication authentication) {
-        val now = LocalDateTime.now();
-        val validity = now.plus(jwtConfig.getExpiration());
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("roles", authentication.getAuthorities())
-                .setIssuedAt(Timestamp.valueOf(now))
-                .setExpiration(Timestamp.valueOf(validity))
-                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecret())
-                .compact();
-    }
 }
