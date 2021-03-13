@@ -1,11 +1,13 @@
 package com.example.spring_security.demo.security;
 
 import com.example.spring_security.demo.exeptions.JwtAuthenticationException;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletResponse;
@@ -13,19 +15,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public class JwtTokenFilter extends BasicAuthenticationFilter {
+@Component
+@RequiredArgsConstructor
+public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtTokenFilter(AuthenticationManager authenticationManager,
-                          JwtTokenProvider jwtTokenProvider) {
-        super(authenticationManager);
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @Override
     @SneakyThrows
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain chain) {
         Optional.ofNullable(jwtTokenProvider.resolveToken(request))
                 .filter(token -> validateToken(token, response))
                 .map(token -> jwtTokenProvider.getAuthentication(token, request))
