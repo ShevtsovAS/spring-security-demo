@@ -12,13 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,7 +31,6 @@ import static java.util.stream.Collectors.toList;
 public class JwtTokenProvider {
 
     private final JwtConfig jwtConfig;
-    private final UserDetailsService userDetailsService;
 
     public String createToken(Authentication authentication) {
         val now = LocalDateTime.now();
@@ -56,8 +56,12 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token, HttpServletRequest request) {
-        val userDetails = userDetailsService.loadUserByUsername(getUserName(token));
-        var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        var userDetails = User
+                .withUsername(getUserName(token))
+                .password("")
+                .authorities(getAuthorities(token))
+                .build();
+        val authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         return authentication;
     }
@@ -75,6 +79,16 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    @SuppressWarnings("unchecked") // jjwt библиотека оказалась неудобной в плане извлечения массивов данных из объекта claims токена
+    private String[] getAuthorities(String token) {
+        return ((ArrayList<String>) Jwts.parser()
+                .setSigningKey(jwtConfig.getSecret())
+                .parseClaimsJws(token)
+                .getBody()
+                .get("authorities"))
+                .toArray(String[]::new);
     }
 
 }
