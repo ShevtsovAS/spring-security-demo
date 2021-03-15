@@ -55,15 +55,23 @@ public class JwtTokenProvider {
         }
     }
 
-    public Authentication getAuthentication(String token, HttpServletRequest request) {
-        var userDetails = User
+    public Authentication getAuthentication(HttpServletRequest request) {
+        return Optional.ofNullable(resolveToken(request))
+                .filter(this::validateToken)
+                .map(this::getAuthentication)
+                .map(authentication -> {
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    return authentication;
+                }).orElse(null);
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        val userDetails = User
                 .withUsername(getUserName(token))
                 .password("")
                 .authorities(getAuthorities(token))
                 .build();
-        val authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        return authentication;
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     public String resolveToken(HttpServletRequest request) {
