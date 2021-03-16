@@ -1,5 +1,6 @@
 package com.example.spring_security.demo.security;
 
+import com.example.spring_security.demo.model.AppUser;
 import com.example.spring_security.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -17,7 +18,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        var user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("wrong credentials"));
-        return SecurityUser.of(user);
+        return userRepository.findByEmail(email)
+                .map(AppUser::getDetails)
+                .orElseThrow(() -> new UsernameNotFoundException("wrong credentials"));
     }
 }

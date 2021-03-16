@@ -1,6 +1,8 @@
 package com.example.spring_security.demo.model;
 
 import lombok.*;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 
@@ -11,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +38,13 @@ public class User {
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private Status status;
+
+    public UserDetails getDetails() {
+        return User
+                .withUsername(email)
+                .password(password)
+                .accountLocked(status != Status.ACTIVE)
+                .authorities(role.getAuthorities())
+                .build();
+    }
 }
