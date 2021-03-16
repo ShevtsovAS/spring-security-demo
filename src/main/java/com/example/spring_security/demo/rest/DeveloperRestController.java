@@ -36,7 +36,7 @@ public class DeveloperRestController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('developers:write')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteById(@PathVariable Long id) {
         developerService.deleteById(id);
     }

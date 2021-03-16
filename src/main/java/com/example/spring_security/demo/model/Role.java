@@ -17,12 +17,15 @@ public enum Role {
     USER(Set.of(DEVELOPERS_READ)),
     ADMIN(Set.of(DEVELOPERS_READ, DEVELOPERS_WRITE));
 
+    private static final String ROLE_PREFIX = "ROLE_";
     private final Set<Permission> permissions;
 
     public Set<GrantedAuthority> getAuthorities() {
-        return getPermissions().stream()
+        Set<GrantedAuthority> authorities = getPermissions().stream()
                 .map(Permission::getValue)
                 .map(SimpleGrantedAuthority::new)
                 .collect(toSet());
+        authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + name()));
+        return authorities;
     }
 }
