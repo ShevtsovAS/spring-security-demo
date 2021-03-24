@@ -3,14 +3,9 @@ server.error:
   include-message: always
 
 spring:
+  profiles.active: security
   datasource:
     url: jdbc:postgresql://localhost:5432/spring_security_demo
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
-
-jwt:
-  header: Authorization
-  prefix: 'Bearer '
-  secret: my-secret-key
-  expiration: 24h

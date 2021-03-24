@@ -1,0 +1,7 @@
+security-type: jwt
+
+jwt:
+  header: Authorization
+  prefix: 'Bearer '
+  secret: my-secret-key
+  expiration: 24h
