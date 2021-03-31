@@ -1,7 +1,19 @@
-security-type: jwt
+security-type: oauth2
 
 jwt:
   header: Authorization
   prefix: 'Bearer '
   secret: my-secret-key
   expiration: 24h
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 390144746500-4sciu9h50recrpq1dju1rr0qnr3ap0l9.apps.googleusercontent.com
+            client-secret: HlD7hgub0MV-uy3MftLdpN_l
+          facebook:
+            client-id: 766901853827860
+            client-secret: d54bb3a8bc30ab9fd707e6e9bbc38ad2

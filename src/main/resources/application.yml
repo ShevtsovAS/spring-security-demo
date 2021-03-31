@@ -1,6 +1,8 @@
-server.error:
+server:
+  error:
 #  include-stacktrace: always
-  include-message: always
+    include-message: always
+  port: 8081
 
 spring:
   profiles.active: security

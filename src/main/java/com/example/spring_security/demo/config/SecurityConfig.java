@@ -37,7 +37,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             case BASE -> configureBase(http);
             case FORM -> configureForm(http);
             case JWT -> configureJwt(http);
+            case OAUTH_2 -> configureOauth2(http);
         }
+    }
+
+    private void configureOauth2(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login();
     }
 
     private void configureBase(HttpSecurity http) throws Exception {
