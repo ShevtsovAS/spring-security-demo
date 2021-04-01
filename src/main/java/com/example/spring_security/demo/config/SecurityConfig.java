@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationC
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -42,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityType securityType;
 
     private final JwtTokenFilter jwtTokenFilter;
+    private final ClientRegistrationRepository customClientRegistrationRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -59,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
+                .clientRegistrationRepository(customClientRegistrationRepository)
                 .tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient())
                 .and()
                 .userInfoEndpoint().userService(new CustomOAuth2UserService());

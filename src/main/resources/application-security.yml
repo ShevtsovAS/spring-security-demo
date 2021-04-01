@@ -12,22 +12,11 @@ spring:
       client:
         registration:
           google:
-            client-id: 390144746500-4sciu9h50recrpq1dju1rr0qnr3ap0l9.apps.googleusercontent.com
-            client-secret: HlD7hgub0MV-uy3MftLdpN_l
+            client-id: ${google_client_id}
+            client-secret: ${google_client_secret}
           facebook:
-            client-id: 766901853827860
-            client-secret: d54bb3a8bc30ab9fd707e6e9bbc38ad2
+            client-id: ${facebook_client_id}
+            client-secret: ${facebook_client_secret}
           vk:
-            client-id: 7809659
-            client-secret: 4IMZQmMBTV2CeBQ3JIAU
-            scope: email
-            client-authentication-method: post
-            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
-            client-name: VK
-            authorization-grant-type: authorization_code
-        provider:
-          vk:
-            authorization-uri: https://oauth.vk.com/authorize?v=5.95
-            token-uri: https://oauth.vk.com/access_token
-            user-info-uri: https://api.vk.com/method/users.get?v=5.95
-            user-name-attribute: user_id
+            client-id: ${vk_client_id}
+            client-secret: ${vk_client_secret}
