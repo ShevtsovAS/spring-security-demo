@@ -39,6 +39,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String OAUTH2_LOGIN_URL = "/auth/oauth2_login";
+
     @Value("${security-type:base}")
     private SecurityType securityType;
 
@@ -58,9 +60,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private void configureOauth2(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers(OAUTH2_LOGIN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
+                .loginPage(OAUTH2_LOGIN_URL)
                 .clientRegistrationRepository(customClientRegistrationRepository)
                 .tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient())
                 .and()
