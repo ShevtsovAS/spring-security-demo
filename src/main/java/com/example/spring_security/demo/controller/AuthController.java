@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
 
+import static com.example.spring_security.demo.config.SecurityConfig.AUTHORIZATION_REQUEST_BASE_URI;
 import static com.example.spring_security.demo.util.CustomCollectors.toLinkedMap;
 
 @Controller
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
-    private static final String AUTHORIZATION_REQUEST_BASE_URI = "/oauth2/authorization";
 
     private final ClientRegistrationRepository customClientRegistrationRepository;
     private final OAuth2ClientProperties oAuth2ClientProperties;
