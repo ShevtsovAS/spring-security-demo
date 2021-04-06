@@ -71,6 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizationEndpoint().baseUri(AUTHORIZATION_REQUEST_BASE_URI).authorizationRequestRepository(authorizationRequestRepository())
                 .and()
                 .loginPage(OAUTH2_LOGIN_URL)
+                .defaultSuccessUrl("/auth/loginSuccess")
                 .clientRegistrationRepository(customClientRegistrationRepository)
                 .tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient())
                 .and()
